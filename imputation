@@ -1,0 +1,29 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8
+#PBS -l walltime=48:00:00
+#PBS -l pmem=30gb
+#PBS -N ALL_GL1
+#PBS -j oe
+
+cd $PBS_O_WORKDIR
+
+module load gatk/3.8
+
+#Genotype likelihoods using Beagle
+#Done per chromosome file
+
+java -Xmx30G -jar /storage/home/szm316/scratch/height1/height3_v2/height3_v6/beagle.27Jan18.7e1.jar \
+gl=15.all_merged_DEAM_dec.raw.recode.recode.vcf impute=true gprobs=true nthreads=8 modelscale=1.6 \ 
+ref=/storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/beagle_chroms3/chr1.1kg.phase3.v5a.vcf \ 
+map=/storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/chr_files_sex/plink.chr1.GRCh37.map \
+out=ALL_MERGED_CHR1_beagle_GL_DEAM
+
+#Imputation
+java -Xmx30G -jar /storage/home/szm316/scratch/height1/height3_v2/height3_v6/beagle.27Jan18.7e1.jar \
+gt=ALL_MERGED_CHR1_beagle_GL_DEAM_dec.vcf impute=true gprobs=true nthreads=10 \
+ref=/storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/beagle_chroms3/chr1.1kg.phase3.v5a.vcf \
+map=/storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/chr_files_sex/plink.chr1.GRCh37.map \
+out=ALL_MERGED_CHR1_beagle_GT_DEAM
+
+
+
