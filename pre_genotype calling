@@ -1,0 +1,49 @@
+!/bin/bash
+#PBS -l nodes=1:ppn=4
+#PBS -l pmem=15gb
+#PBS -l walltime=48:00:00
+#PBS -N gtk_IND
+#PBS -M szm316@psu.edu
+#PBS -j oe
+
+
+cd $PBS_O_WORKDIR
+
+
+IND=NAME
+
+for IND in $IND; do
+
+module load picard/2.10.10
+module load gatk/3.8
+module load samtools
+module load plink/1.9
+
+java -jar ${PICARD}/picard.jar AddOrReplaceReadGroups I=${IND}_min30MQ30.bam O=${IND}_hg37_TRM.filtered.RG.bam \
+RGLB=${IND}_hg37 RGPL=Illumina RGPU=Group1 RGSM=${IND}_hg37 VALIDATION_STRINGENCY=LENIENT
+
+samtools index ${IND}_hg37_TRM.filtered.RG.bam
+
+#GATK REALIGNER TARGET CREATOR
+java -Xmx15G -jar $GATK/GenomeAnalysisTK.jar -T RealignerTargetCreator -R /storage/home/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/human_g1k_v37.fasta \
+-known /storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/Mills_and_1000G_gold_standard.indels.b37.vcf \
+-known /storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/1000G_phase1.indels.b37.vcf \
+-I ${IND}_hg37_1240k_TRM.filtered.RG.bam -o ${IND}_hg37_TRM_realntarget.intervals.bam.list
+
+#GATK INDELREALIGNER
+java -Xmx15G -jar $GATK/GenomeAnalysisTK.jar -T IndelRealigner -R /storage/home/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/human_g1k_v37.fasta \
+-filterMBQ -targetIntervals ${IND}_hg37_TRM_realntarget.intervals.bam.list \
+-known /storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/Mills_and_1000G_gold_standard.indels.b37.vcf \
+-known /storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/1000G_phase1.indels.b37.vcf \
+-I ${IND}_hg37_TRM.filtered.RG.bam -o ${IND}_hg37_TRM_indelrealn.bam
+
+#BASE RECALIBRATOR
+module load gatk/3.8
+java -Xmx15G -jar $GATK/GenomeAnalysisTK.jar -T BaseRecalibrator -R /storage/home/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/human_g1k_v37.fasta \
+-I ${IND}_hg37_TRM_indelrealn.bam -knownSites /storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/Mills_and_1000G_gold_standard.indels.b37.vcf \
+-knownSites /storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/1000G_phase1.indels.b37.vcf \
+-knownSites /storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/dbsnp_138.b37.vcf \
+-o ${IND}_hg37_TRM_recal_data.table
+
+java -Xmx15G -jar $GATK/GenomeAnalysisTK.jar -T PrintReads -R /storage/home/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/human_g1k_v37.fasta \
+-I ${IND}_hg37_TRM_indelrealn.bam -BQSR ${IND}_hg37_TRM_recal_data.table -o ${IND}_hg37_TRM_recal_reads.bam
