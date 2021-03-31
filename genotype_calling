@@ -1,0 +1,36 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8
+#PBS -l pmem=35gb
+#PBS -l walltime=48:00:00
+#PBS -N gatk_ch1
+#PBS -j oe
+
+cd $PBS_O_WORKDIR
+
+#script to genotype chromosomes 1-22
+#File from here: http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ filtered to remove variants that are not SNPs, multiallelic SNPs and X- and Y-chromosomes
+
+module load gatk/3.8
+
+BAMS=(`ls BAMS3/*.bam`)
+
+count=0
+for b in ${BAMS[*]}; do
+    BAMS[$count]="-I "$b" "
+    count=`expr $count + 1`
+done
+
+CHROM=1
+java -Xmx35G -jar $GATK/GenomeAnalysisTK.jar \
+    -T UnifiedGenotyper \
+    -R /storage/home/szm316/scratch/height1/height3_v2/height3_v6/hg37_ref3/human_g1k_v37.fasta \
+    ${BAMS[*]} \
+    -o ${CHROM}.all_merged_shapeit.raw.vcf \
+    --min_base_quality_score 30 \
+    --genotyping_mode GENOTYPE_GIVEN_ALLELES \
+    --alleles /storage/home/s/szm316/scratch/height1/height3_v2/height3_v6/beagle_chroms5/ALL.chr.phase3_shapeit2_biallelic_nofilter.genotypes.vcf \
+    --output_mode EMIT_ALL_CONFIDENT_SITES \
+    --allSitePLs \
+    -nct 4 \
+    -nt 8 \
+    -L 1
