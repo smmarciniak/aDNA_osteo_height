@@ -1,4 +1,11 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=8
+#PBS -l pmem=35gb
+#PBS -l walltime=48:00:00
+#PBS -N scoring
+#PBS -j oe
 
+cd $PBS_O_WORKDIR
 
 #Clumping performed using PLINK 1.9
 #Using the 1000 Genomes “Europeans” reference population panel to retain the most correlated SNPs from the UK Biobank height associated SNPs
@@ -6,9 +13,9 @@
 plink --bfile ALL.chr.phase3_shapeit2_biallelic_nofilter.genotypes --keep-fam 1000G_IND_EUR.txt \
 --clump ukbb_BothSexes_cols2_nodups.tsv --clump-field Pval --clump-snp-field ID --clump-p1 0.00000005 \
 --clump-r2 0.1 --clump-kb 1000 --exclude 1KG_duplicates.snplist --memory 20000  \
---out ALL.chr.phase3.1KG_clump_to_UKBB_p1.5e8_100kb
+--out ALL.chr.phase3.1KG_clump_to_UKBB_p1.5e8_1000kb
 
-#Polygenic scoring on genotype VCF filtered to a minimum genotype probability of 0.99
- plink --vcf ALL_MERGED_CHRS_deam_concatGL99.vcf --exclude concatGL_SNPs_dups.snps --extract UKBB_OCT_V2_p1.5e8.valid.snps \
+#Polygenic scoring on imputed genotype VCF filtered to a minimum genotype probability of 0.99 excluding duplicates and scoring only the clumped SNPs
+ plink --vcf ALL_MERGED_CHRS_deam_concatGL99.vcf --exclude concatGL_SNPs_dups.snps --extract UKBB_OCT_p1.5e8.valid.snps \
   --geno 0 --score ukbb_BothSexes_cols2_nodups.tsv 1 2 3 center \
   --out ukbb_BothSexes_dec_deam_clump_5e8 --const-fid
