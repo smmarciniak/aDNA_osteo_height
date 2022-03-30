@@ -16,7 +16,7 @@ dfukb1e2v2J_radius <- read.csv("ukbb_height_RADIUS.csv")
 
 #no deam data
 fitGP99_1KGp5e8_update2=lm(dfukb1e2v2J$OSTE_HT_NS~dfukb1e2v2J$X1KG_clump_5e8_dec+SEX, data=dfukb1e2v2J)
-summary(fitGP99_1KGp5e8_update2) #pval <2.2e-16, r2 0.4659; SexM < 2e-16
+summary(fitGP99_1KGp5e8_update2) 
 residuals_1KGgp99p5e8 <- residuals(fitGP99_1KGp5e8_update2) 
 plot(residuals_1KGgp99p5e8)
 residuals_1KGgp99p5e8_update2 <- cbind(dfukb1e2v2J,residuals_1KGgp99p5e8)
@@ -28,7 +28,7 @@ summary(fitFS_nod)
 
 #deam data
 fitGP99_1KGp5e8_deam_update2=lm(dfukb1e2v2J$OSTE_HT_NS~dfukb1e2v2J$deam_clump5e8_dec+SEX, data=dfukb1e2v2J)
-summary(fitGP99_1KGp5e8_deam_update2) #pval <2.2e-16, r2 0.4338; SexM < 2e-16
+summary(fitGP99_1KGp5e8_deam_update2) 
 residuals_deam_1KGgp99p5e8 <- residuals(fitGP99_1KGp5e8_deam_update2) 
 plot(residuals_deam_1KGgp99p5e8)
 residuals_1KGgp99p5e8_deam_update2 <- cbind(dfukb1e2v2J,residuals_deam_1KGgp99p5e8)
@@ -40,7 +40,7 @@ summary(fitFS)
 
 #deam with ancestries data
 fitGP99_1KGp5e8_deam_anc_update2=lm(dfukb1e2v2J$OSTE_HT_NS~dfukb1e2v2J$deam_clump5e8_dec+SEX+C1+C2+C3+C4, data=dfukb1e2v2J)
-summary(fitGP99_1KGp5e8_deam_anc_update2) #pval <2.2e-16, r2 0.4338; SexM < 2e-16
+summary(fitGP99_1KGp5e8_deam_anc_update2)
 residuals_deam_anc_1KGgp99p5e8 <- residuals(fitGP99_1KGp5e8_deam_anc_update2) 
 plot(residuals_deam_anc_1KGgp99p5e8)
 residuals_1KGgp99p5e8_deam_anc_update2 <- cbind(dfukb1e2v2J,residuals_deam_anc_1KGgp99p5e8)
@@ -53,11 +53,10 @@ residuals_osteo_sexfactor_update <- cbind(dfukb1e2v2J,residuals_osteo_sexfactor)
 
 #deam with latitude data
 fitGP99_1KGp5e8_deam_lat_update2=lm(dfukb1e2v2J$OSTE_HT_NS~dfukb1e2v2J$deam_clump5e8_dec+SEX+LAT+LON, data=dfukb1e2v2J)
-summary(fitGP99_1KGp5e8_deam_lat_update2) #pval <2.2e-16, r2 0.4338; SexM < 2e-16
+summary(fitGP99_1KGp5e8_deam_lat_update2) 
 residuals_deam_lat_1KGgp99p5e8 <- residuals(fitGP99_1KGp5e8_deam_lat_update2) 
 plot(residuals_deam_lat_1KGgp99p5e8)
 residuals_1KGgp99p5e8_deam_lat_update2 <- cbind(dfukb1e2v2J,residuals_deam_lat_1KGgp99p5e8)
-
 
 #long bone lengths regression
 ukbb_females_cm_femur=lm(ukbb_females$Avg_femur_cm~ukbb_females$deam_clump5e8_dec, data=ukbb_females)
