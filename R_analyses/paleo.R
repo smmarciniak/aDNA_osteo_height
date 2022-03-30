@@ -3,10 +3,10 @@
 #Read in paleo file
 paleo <- read.csv("osteo-paleo-indicators-2020-Oct_v3.csv")
 
-#read in file for n53 individuals
-paleo_n53 <- read.csv("paleo_all_inds_n53_v2.csv")
-paleo_n53_123 <- read.csv("paleo_all_inds_n53_123.csv")
-paleo_n53_23 <- read.csv("paleo_all_inds_n53_23_v2.csv")
+#read in file for n58 individuals
+paleo_n53 <- read.csv("paleo_all_inds_n58_v2.csv")
+paleo_n53_123 <- read.csv("paleo_all_inds_n58_123.csv")
+paleo_n53_23 <- read.csv("paleo_all_inds_n58_23_v2.csv")
 
 #subset data
 #include Cribra.orbitalia2, Porotic.hyperostosis2 and LEH2 for healed lesion analyses
@@ -212,8 +212,8 @@ DFtall_noNA_PH <- subset(DFtall_noNA, Paleo=="Porotic.hyperostosis2")
 DFtall_noNA_PH_TRUE <- subset(DFtall_noNA_PH, Value=="TRUE") 
 DFtall_noNA_PH_FALSE <- subset(DFtall_noNA_PH, Value=="FALSE")
 
-##Plot for n53 individuals
-paleo_inds_resid_plot=ggplot(paleo_merge_deam_clump5e8_n53, aes(paleo_merge_deam_clump5e8_n53$Num.inds, paleo_merge_deam_clump5e8_n53$residuals_deam_1KGgp99p5e8, col=SEX, fill=SEX, group=Num.inds)) + 
+##Plot for n58 individuals
+paleo_inds_resid_plot=ggplot(paleo_merge_deam_clump5e8_n58, aes(paleo_merge_deam_clump5e8_n58$Num.inds, paleo_merge_deam_clump5e8_n58$residuals_deam_1KGgp99p5e8, col=SEX, fill=SEX, group=Num.inds)) + 
   xlab("Time Period") + geom_hline(yintercept =0, linetype="dashed", color = "black")+
   ylab("Residual of Genetic Height vs Osteo Height") +
   geom_violin(trim =TRUE, lwd=0.3, width=0.3) +
@@ -229,9 +229,9 @@ paleo_inds_resid_plot=ggplot(paleo_merge_deam_clump5e8_n53, aes(paleo_merge_deam
   theme(legend.position="none")
 paleo_inds_resid_plot
 
-paleon53_zero <- subset(paleo_merge_deam_clump5e8_n53, Num.inds=="0")
-t.test(paleon54_zero$residuals_deam_1KGgp99p5e8,paleo_merge_deam_clump5e8_n54_123$residuals_deam_1KGgp99p5e8)
-t.test(paleon54_zero$residuals_deam_1KGgp99p5e8,paleo_merge_deam_clump5e8_n54_23$residuals_deam_1KGgp99p5e8)
+paleon58_zero <- subset(paleo_merge_deam_clump5e8_n58, Num.inds=="0")
+t.test(paleon58_zero$residuals_deam_1KGgp99p5e8,paleo_merge_deam_clump5e8_n58_123$residuals_deam_1KGgp99p5e8)
+t.test(paleon58_zero$residuals_deam_1KGgp99p5e8,paleo_merge_deam_clump5e8_n58_23$residuals_deam_1KGgp99p5e8)
 
 
 
